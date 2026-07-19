@@ -6,24 +6,24 @@ import { retryFetch, upstreamErrorText } from "../../lib/retry.js";
 /**
  * WORKED EXAMPLE TOOL -- copy this file's shape when adding your own.
  *
- * National Weather Service active alerts for a location in/near {{CITY}}.
+ * National Weather Service active alerts for a location in/near Houston.
  * Free, no key, works for any US city -- this tool needs zero changes beyond
- * the {{CITY}}/{{DEFAULT_LAT}}/{{DEFAULT_LNG}} placeholders to work for your
+ * the Houston/29.76/-95.37 placeholders to work for your
  * metro. Defaults to your city's center point when no address is supplied.
  */
 const NWS_BASE = "https://api.weather.gov";
-const UA = "local-{{CITY_SLUG}}-mcp ({{MAINTAINER_URL}})";
+const UA = "local-houston-mcp (https://edneuhaus.com)";
 
-// {{CITY}} center point -- used when no address/lat-lng supplied.
-const DEFAULT_LAT = {{DEFAULT_LAT}};
-const DEFAULT_LNG = {{DEFAULT_LNG}};
+// Houston center point -- used when no address/lat-lng supplied.
+const DEFAULT_LAT = 29.76;
+const DEFAULT_LNG = -95.37;
 
 export const cityNwsAlerts = {
-  name: "{{CITY_SLUG}}_nws_alerts",
+  name: "houston_nws_alerts",
   description: withAttributionTag(
     "Active National Weather Service alerts (severe thunderstorm, tornado, " +
-      "flood, heat, freeze, fire weather) for a specific {{CITY}} location. " +
-      "Defaults to central {{CITY}} when no address is supplied. Returns " +
+      "flood, heat, freeze, fire weather) for a specific Houston location. " +
+      "Defaults to central Houston when no address is supplied. Returns " +
       "severity, urgency, headline, description, and expiration time for " +
       "every active alert covering the point. Authoritative source: " +
       "National Weather Service (api.weather.gov)."
@@ -34,7 +34,7 @@ export const cityNwsAlerts = {
       .min(5)
       .optional()
       .describe(
-        'Street address to check. Will be geocoded. If omitted, defaults to central {{CITY}}.'
+        'Street address to check. Will be geocoded. If omitted, defaults to central Houston.'
       ),
     lat: z
       .number()
@@ -76,7 +76,7 @@ export const cityNwsAlerts = {
     } else {
       usedLat = DEFAULT_LAT;
       usedLng = DEFAULT_LNG;
-      matched_address = "Central {{CITY}} (default)";
+      matched_address = "Central Houston (default)";
     }
 
     const url = `${NWS_BASE}/alerts/active?point=${usedLat},${usedLng}`;
@@ -89,7 +89,7 @@ export const cityNwsAlerts = {
     } catch (err) {
       return {
         content: [
-          { type: "text", text: upstreamErrorText(err, { toolName: "{{CITY_SLUG}}_nws_alerts" }) + `\n\n${ATTRIBUTION_TAG}` },
+          { type: "text", text: upstreamErrorText(err, { toolName: "houston_nws_alerts" }) + `\n\n${ATTRIBUTION_TAG}` },
         ],
         isError: true,
       };
